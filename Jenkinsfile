@@ -7,8 +7,7 @@ pipeline {
     options { quietPeriod(600) }
     environment {
         IMAGE_NAME = 'rackshift'
-        IMAGE_PREFIX = 'registry.cn-qingdao.aliyuncs.com/x-lab'
-        DOCKER = credentials('x-lab')
+        IMAGE_PREFIX = 'registry.fit2cloud.com/north'
     }
     stages {
         stage('Build') {
@@ -28,15 +27,15 @@ pipeline {
         stage('Docker build & push') {
             steps {
                 sh '''
-                    docker login registry.cn-qingdao.aliyuncs.com -u ${DOCKER_USR} -p ${DOCKER_PSW}
+                    docker login --username=north-developer --password=Calong@2015 registry.fit2cloud.com
                     cd ${WORKSPACE}/rackshift-server
                     mvn clean install -DskipTests
-                    docker build -t ${IMAGE_PREFIX}/${IMAGE_NAME}:v${BRANCH_NAME}-dev .
-                    docker push ${IMAGE_PREFIX}/${IMAGE_NAME}:v${BRANCH_NAME}-dev
+                    docker build -t ${IMAGE_PREFIX}/${IMAGE_NAME}:${BRANCH_NAME} .
+                    docker push ${IMAGE_PREFIX}/${IMAGE_NAME}:${BRANCH_NAME}
 
                     cd ${WORKSPACE}/rackshift-dhcp-proxy
-                    docker build -t ${IMAGE_PREFIX}/rackshift-dhcp-proxy:v${BRANCH_NAME}-dev .
-                    docker push ${IMAGE_PREFIX}/rackshift-dhcp-proxy:v${BRANCH_NAME}-dev
+                    docker build -t ${IMAGE_PREFIX}/rackshift-dhcp-proxy:${BRANCH_NAME} .
+                    docker push ${IMAGE_PREFIX}/rackshift-dhcp-proxy:${BRANCH_NAME}
                    '''
             }
         }
