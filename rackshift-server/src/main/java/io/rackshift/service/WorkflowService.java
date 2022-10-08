@@ -97,6 +97,16 @@ public class WorkflowService {
     public boolean add(WorkflowDTO queryVO) {
         WorkflowWithBLOBs workflow = new WorkflowWithBLOBs();
         BeanUtils.copyBean(workflow, queryVO);
+        //为自定义工作流设置默认的tasks和options
+        String injectableName = workflow.getInjectableName();
+        switch (injectableName){
+            case "Graph.InstallCentOS":
+                workflow.setOptions("{\"rackhd-callback-notification-wait\":{\"_taskTimeout\":1200000},\"install-os\":{\"_taskTimeout\":3600000}}");
+                workflow.setTasks("[{\"ignoreFailure\":true,\"taskName\":\"Task.Obm.Node.PxeBoot\",\"label\":\"set-boot-pxe\"},{\"taskName\":\"Task.Obm.Node.Reboot\",\"label\":\"reboot\",\"waitOn\":{\"set-boot-pxe\":\"finished\"}},{\"taskName\":\"Task.Os.Install.CentOS\",\"label\":\"install-os\",\"waitOn\":{\"reboot\":\"succeeded\"}},{\"taskName\":\"Task.Wait.Notification\",\"label\":\"rackhd-callback-notification-wait\",\"waitOn\":{\"install-os\":\"succeeded\"}}]");
+                break;
+            default:
+                break;
+        }
         workflowMapper.insertSelective(workflow);
         return true;
     }
