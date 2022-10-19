@@ -418,7 +418,7 @@ export default {
 
         if (_.find(res.data.listObject, (o) => o.status == 'running' || o.status == 'created')) {
           if (!that.refreshTaskPointer) {
-            that.refreshTaskPointer = setInterval(that.getDataNoLoading, 3000);
+            //that.refreshTaskPointer = setInterval(that.getDataNoLoading, 3000);
           }
         } else {
           if (that.refreshTaskPointer) {
